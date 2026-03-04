@@ -16,12 +16,8 @@ public class OrderService {
     }
 
     public Order createOrder(String customerName, BigDecimal total) {
-        if (customerName == null || customerName.isBlank()) {
-            throw new IllegalArgumentException("Customer name must not be empty");
-        }
-        if (total == null || total.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Total must be greater than zero");
-        }
+        validateCustomerName(customerName);
+        validateTotal(total);
         Order order = new Order(customerName, total);
         return orderRepository.save(order);
     }
@@ -29,5 +25,17 @@ public class OrderService {
     public Order getOrder(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
+    }
+
+    private void validateCustomerName(String customerName) {
+        if (customerName == null || customerName.isBlank()) {
+            throw new IllegalArgumentException("Customer name must not be empty");
+        }
+    }
+
+    private void validateTotal(BigDecimal total) {
+        if (total == null || total.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Total must be greater than zero");
+        }
     }
 }
