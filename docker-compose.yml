@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tdd-demo-postgres
+    environment:
+      POSTGRES_DB: tdddemo
+      POSTGRES_USER: tdddemo
+      POSTGRES_PASSWORD: tdddemo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
