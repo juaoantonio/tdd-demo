@@ -3,6 +3,7 @@ package br.dev.joaobarbosa.tdddemo.application;
 import br.dev.joaobarbosa.tdddemo.domain.Order;
 import br.dev.joaobarbosa.tdddemo.domain.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -15,6 +16,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional
     public Order createOrder(String customerName, BigDecimal total) {
         validateCustomerName(customerName);
         validateTotal(total);
@@ -22,6 +24,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional(readOnly = true)
     public Order getOrder(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
