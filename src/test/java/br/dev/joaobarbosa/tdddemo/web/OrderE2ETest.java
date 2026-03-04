@@ -1,0 +1,121 @@
+package br.dev.joaobarbosa.tdddemo.web;
+
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class OrderE2ETest {
+
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+        RestAssured.basePath = "/orders";
+    }
+
+    @Test
+    @DisplayName("POST /orders → 201 com id retornado")
+    void shouldCreateOrderAndReturn201() {
+        given()
+            .contentType(ContentType.JSON)
+            .body("""
+                    {
+                      "customerName": "Alice",
+                      "total": 99.90
+                    }
+                    """)
+        .when()
+            .post()
+        .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("customerName", equalTo("Alice"))
+            .body("total", equalTo(99.90f))
+            .body("status", equalTo("CREATED"));
+    }
+
+    @Test
+    @DisplayName("GET /orders/{id} → 200 com dados corretos")
+    void shouldGetOrderAndReturn200() {
+        // First create an order
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {
+                          "customerName": "Bob",
+                          "total": 250.00
+                        }
+                        """)
+                .when()
+                .post()
+                .then()
+                .statusCode(201)
+                .extract()
+                .path("id");
+
+        // Then retrieve it
+        given()
+        .when()
+            .get("/{id}", id)
+        .then()
+            .statusCode(200)
+            .body("id", equalTo(id))
+            .body("customerName", equalTo("Bob"))
+            .body("status", equalTo("CREATED"));
+    }
+
+    @Test
+    @DisplayName("POST /orders com total <= 0 → 400")
+    void shouldReturn400WhenTotalIsInvalid() {
+        given()
+            .contentType(ContentType.JSON)
+            .body("""
+                    {
+                      "customerName": "Eve",
+                      "total": 0
+                    }
+                    """)
+        .when()
+            .post()
+        .then()
+            .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("GET /orders/{id} para id inexistente → 404")
+    void shouldReturn404WhenOrderNotFound() {
+        given()
+        .when()
+            .get("/{id}", 999999)
+        .then()
+            .statusCode(404);
+    }
+
+    @Test
+    @DisplayName("POST /orders com nome vazio → 400")
+    void shouldReturn400WhenCustomerNameIsBlank() {
+        given()
+            .contentType(ContentType.JSON)
+            .body("""
+                    {
+                      "customerName": "",
+                      "total": 50.00
+                    }
+                    """)
+        .when()
+            .post()
+        .then()
+            .statusCode(400);
+    }
+}
+
