@@ -14,12 +14,18 @@ public class NotificationService {
     }
 
     public void notifyOrderConfirmed(Order order) {
-        // TODO: not yet implemented
-        throw new UnsupportedOperationException("notifyOrderConfirmed not yet implemented");
+        emailSender.send(
+                order.getCustomerEmail(),
+                "Pedido #" + order.getId() + " confirmado!",
+                "Olá, " + order.getCustomerName() + "!\n\nSeu pedido #" + order.getId() + " foi confirmado e pago com sucesso.\nProduto: " + order.getProductSku() + " x" + order.getQuantity() + "\nTotal: R$ " + order.getTotal() + "\n\nObrigado pela compra!"
+        );
     }
 
     public void notifyOrderCancelled(Order order) {
-        // TODO: not yet implemented
-        throw new UnsupportedOperationException("notifyOrderCancelled not yet implemented");
+        emailSender.send(
+                order.getCustomerEmail(),
+                "Pedido #" + order.getId() + " cancelado",
+                "Olá, " + order.getCustomerName() + "!\n\nSeu pedido #" + order.getId() + " foi cancelado.\nSe você já realizou o pagamento, o estorno será processado em até 5 dias úteis.\n\nEm caso de dúvidas, entre em contato com nosso suporte."
+        );
     }
 }

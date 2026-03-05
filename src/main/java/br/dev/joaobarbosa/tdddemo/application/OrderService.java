@@ -41,14 +41,34 @@ public class OrderService {
 
     @Transactional
     public Order payOrder(Long id) {
-        // TODO: not yet implemented
-        throw new UnsupportedOperationException("payOrder not yet implemented");
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        if (order.getStatus() != OrderStatus.CREATED) {
+            throw new InvalidOrderStatusException(id, order.getStatus(), "pay");
+        }
+        paymentGateway.charge(order.getId(), order.getTotal());
+        stockPort.reserve(order.getProductSku(), order.getQuantity());
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+        notificationService.notifyOrderConfirmed(order);
+        return order;
     }
 
     @Transactional
     public Order cancelOrder(Long id) {
-        // TODO: not yet implemented
-        throw new UnsupportedOperationException("cancelOrder not yet implemented");
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStatusException(id, order.getStatus(), "cancel");
+        }
+        if (order.getStatus() == OrderStatus.PAID) {
+            paymentGateway.refund(order.getId());
+            stockPort.release(order.getProductSku(), order.getQuantity());
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+        notificationService.notifyOrderCancelled(order);
+        return order;
     }
 
     @Transactional(readOnly = true)

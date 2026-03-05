@@ -37,8 +37,8 @@ class OrderServicePaymentTest {
     void setUp() {
         createdOrder = new Order("João", "joao@email.com", "SKU-001", 2, new BigDecimal("199.90"));
         createdOrder.setId(1L);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(createdOrder));
-        when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+        lenient().when(orderRepository.findById(1L)).thenReturn(Optional.of(createdOrder));
+        lenient().when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
     // ─── payOrder ─────────────────────────────────────────────────────────────

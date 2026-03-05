@@ -33,7 +33,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(orderRepository.save(any(Order.class))).thenAnswer(inv -> {
+        lenient().when(orderRepository.save(any(Order.class))).thenAnswer(inv -> {
             Order o = inv.getArgument(0);
             o.setId(1L);
             return o;
