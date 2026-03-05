@@ -32,5 +32,17 @@ public class OrderController {
         var order = orderService.getOrder(id);
         return OrderResponse.from(order);
     }
+
+    @PostMapping("/{id}/pay")
+    public OrderResponse payOrder(@PathVariable Long id) {
+        var order = orderService.payOrder(id);
+        return OrderResponse.from(order);
+    }
+
+    @PostMapping("/{id}/cancel")
+    public OrderResponse cancelOrder(@PathVariable Long id) {
+        var order = orderService.cancelOrder(id);
+        return OrderResponse.from(order);
+    }
 }
 

@@ -1,5 +1,7 @@
 package br.dev.joaobarbosa.tdddemo.web;
 
+import br.dev.joaobarbosa.tdddemo.application.InsufficientStockException;
+import br.dev.joaobarbosa.tdddemo.application.InvalidOrderStatusException;
 import br.dev.joaobarbosa.tdddemo.application.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -16,6 +18,20 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleOrderNotFound(OrderNotFoundException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         detail.setTitle("Order Not Found");
+        return detail;
+    }
+
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ProblemDetail handleInvalidOrderStatus(InvalidOrderStatusException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        detail.setTitle("Invalid Order Status");
+        return detail;
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ProblemDetail handleInsufficientStock(InsufficientStockException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        detail.setTitle("Insufficient Stock");
         return detail;
     }
 
