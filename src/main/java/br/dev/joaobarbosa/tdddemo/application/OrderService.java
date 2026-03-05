@@ -1,7 +1,10 @@
 package br.dev.joaobarbosa.tdddemo.application;
 
+import br.dev.joaobarbosa.tdddemo.application.port.PaymentGateway;
+import br.dev.joaobarbosa.tdddemo.application.port.StockPort;
 import br.dev.joaobarbosa.tdddemo.domain.Order;
 import br.dev.joaobarbosa.tdddemo.domain.OrderRepository;
+import br.dev.joaobarbosa.tdddemo.domain.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,9 +14,18 @@ import java.math.BigDecimal;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final PaymentGateway paymentGateway;
+    private final StockPort stockPort;
+    private final NotificationService notificationService;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        PaymentGateway paymentGateway,
+                        StockPort stockPort,
+                        NotificationService notificationService) {
         this.orderRepository = orderRepository;
+        this.paymentGateway = paymentGateway;
+        this.stockPort = stockPort;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -25,6 +37,18 @@ public class OrderService {
         validateTotal(total);
         Order order = new Order(customerName, customerEmail, productSku, quantity, total);
         return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order payOrder(Long id) {
+        // TODO: not yet implemented
+        throw new UnsupportedOperationException("payOrder not yet implemented");
+    }
+
+    @Transactional
+    public Order cancelOrder(Long id) {
+        // TODO: not yet implemented
+        throw new UnsupportedOperationException("cancelOrder not yet implemented");
     }
 
     @Transactional(readOnly = true)
