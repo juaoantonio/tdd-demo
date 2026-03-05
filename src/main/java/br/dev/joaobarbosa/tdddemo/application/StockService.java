@@ -13,16 +13,18 @@ public class StockService {
     }
 
     public void reserve(String sku, int quantity) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be at least 1");
-        }
+        validateQuantity(quantity);
         stockPort.reserve(sku, quantity);
     }
 
     public void release(String sku, int quantity) {
+        validateQuantity(quantity);
+        stockPort.release(sku, quantity);
+    }
+
+    private void validateQuantity(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be at least 1");
         }
-        stockPort.release(sku, quantity);
     }
 }
