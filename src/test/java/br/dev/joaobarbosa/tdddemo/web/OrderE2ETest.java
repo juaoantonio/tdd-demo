@@ -31,6 +31,9 @@ class OrderE2ETest {
             .body("""
                     {
                       "customerName": "Alice",
+                      "customerEmail": "alice@email.com",
+                      "productSku": "SKU-001",
+                      "quantity": 2,
                       "total": 99.90
                     }
                     """)
@@ -40,6 +43,9 @@ class OrderE2ETest {
             .statusCode(201)
             .body("id", notNullValue())
             .body("customerName", equalTo("Alice"))
+            .body("customerEmail", equalTo("alice@email.com"))
+            .body("productSku", equalTo("SKU-001"))
+            .body("quantity", equalTo(2))
             .body("total", equalTo(99.90f))
             .body("status", equalTo("CREATED"));
     }
@@ -47,12 +53,14 @@ class OrderE2ETest {
     @Test
     @DisplayName("GET /orders/{id} → 200 com dados corretos")
     void shouldGetOrderAndReturn200() {
-        // First create an order
         int id = given()
                 .contentType(ContentType.JSON)
                 .body("""
                         {
                           "customerName": "Bob",
+                          "customerEmail": "bob@email.com",
+                          "productSku": "SKU-002",
+                          "quantity": 1,
                           "total": 250.00
                         }
                         """)
@@ -63,7 +71,6 @@ class OrderE2ETest {
                 .extract()
                 .path("id");
 
-        // Then retrieve it
         given()
         .when()
             .get("/{id}", id)
@@ -82,6 +89,9 @@ class OrderE2ETest {
             .body("""
                     {
                       "customerName": "Eve",
+                      "customerEmail": "eve@email.com",
+                      "productSku": "SKU-001",
+                      "quantity": 1,
                       "total": 0
                     }
                     """)
@@ -109,6 +119,9 @@ class OrderE2ETest {
             .body("""
                     {
                       "customerName": "",
+                      "customerEmail": "eve@email.com",
+                      "productSku": "SKU-001",
+                      "quantity": 1,
                       "total": 50.00
                     }
                     """)
@@ -118,4 +131,3 @@ class OrderE2ETest {
             .statusCode(400);
     }
 }
-

@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 public record OrderResponse(
         Long id,
         String customerName,
+        String customerEmail,
+        String productSku,
+        int quantity,
         BigDecimal total,
         OrderStatus status
 ) {
@@ -15,9 +18,11 @@ public record OrderResponse(
         return new OrderResponse(
                 order.getId(),
                 order.getCustomerName(),
+                order.getCustomerEmail(),
+                order.getProductSku(),
+                order.getQuantity(),
                 order.getTotal(),
                 order.getStatus()
         );
     }
 }
-

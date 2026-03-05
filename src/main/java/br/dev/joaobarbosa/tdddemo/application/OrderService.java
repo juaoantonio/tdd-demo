@@ -17,10 +17,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(String customerName, BigDecimal total) {
+    public Order createOrder(String customerName, String customerEmail, String productSku, int quantity, BigDecimal total) {
         validateCustomerName(customerName);
+        validateEmail(customerEmail);
+        validateProductSku(productSku);
+        validateQuantity(quantity);
         validateTotal(total);
-        Order order = new Order(customerName, total);
+        Order order = new Order(customerName, customerEmail, productSku, quantity, total);
         return orderRepository.save(order);
     }
 
@@ -33,6 +36,24 @@ public class OrderService {
     private void validateCustomerName(String customerName) {
         if (customerName == null || customerName.isBlank()) {
             throw new IllegalArgumentException("Customer name must not be empty");
+        }
+    }
+
+    private void validateEmail(String customerEmail) {
+        if (customerEmail == null || customerEmail.isBlank()) {
+            throw new IllegalArgumentException("Customer email must not be empty");
+        }
+    }
+
+    private void validateProductSku(String productSku) {
+        if (productSku == null || productSku.isBlank()) {
+            throw new IllegalArgumentException("Product SKU must not be empty");
+        }
+    }
+
+    private void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be at least 1");
         }
     }
 

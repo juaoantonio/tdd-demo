@@ -18,7 +18,12 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        var order = orderService.createOrder(request.customerName(), request.total());
+        var order = orderService.createOrder(
+                request.customerName(),
+                request.customerEmail(),
+                request.productSku(),
+                request.quantity(),
+                request.total());
         return OrderResponse.from(order);
     }
 

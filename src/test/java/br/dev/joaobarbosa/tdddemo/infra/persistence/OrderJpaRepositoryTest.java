@@ -21,7 +21,7 @@ class OrderJpaRepositoryTest {
     @Test
     @DisplayName("deve salvar e buscar pedido por id")
     void shouldSaveAndFindOrderById() {
-        Order order = new Order("Carlos", new BigDecimal("150.00"));
+        Order order = new Order("Carlos", "carlos@email.com", "SKU-010", 1, new BigDecimal("150.00"));
 
         Order saved = repository.save(order);
 
@@ -30,6 +30,9 @@ class OrderJpaRepositoryTest {
         Optional<Order> found = repository.findById(saved.getId());
         assertThat(found).isPresent();
         assertThat(found.get().getCustomerName()).isEqualTo("Carlos");
+        assertThat(found.get().getCustomerEmail()).isEqualTo("carlos@email.com");
+        assertThat(found.get().getProductSku()).isEqualTo("SKU-010");
+        assertThat(found.get().getQuantity()).isEqualTo(1);
         assertThat(found.get().getTotal()).isEqualByComparingTo("150.00");
         assertThat(found.get().getStatus()).isEqualTo(OrderStatus.CREATED);
     }
@@ -44,8 +47,6 @@ class OrderJpaRepositoryTest {
     @Test
     @DisplayName("deve fazer rollback automático após cada teste")
     void shouldRollbackAfterTest() {
-        // Each @DataJpaTest rolls back automatically — this just proves the table starts empty
         assertThat(repository.count()).isZero();
     }
 }
-

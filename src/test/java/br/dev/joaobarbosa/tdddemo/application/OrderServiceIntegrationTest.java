@@ -22,10 +22,13 @@ class OrderServiceIntegrationTest {
     @Test
     @DisplayName("deve criar e buscar pedido com wiring completo do Spring")
     void shouldCreateAndRetrieveOrder() {
-        Order created = orderService.createOrder("Fernanda", new BigDecimal("300.00"));
+        Order created = orderService.createOrder("Fernanda", "fernanda@email.com", "SKU-100", 3, new BigDecimal("300.00"));
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getStatus()).isEqualTo(OrderStatus.CREATED);
+        assertThat(created.getCustomerEmail()).isEqualTo("fernanda@email.com");
+        assertThat(created.getProductSku()).isEqualTo("SKU-100");
+        assertThat(created.getQuantity()).isEqualTo(3);
 
         Order found = orderService.getOrder(created.getId());
         assertThat(found.getCustomerName()).isEqualTo("Fernanda");
@@ -39,4 +42,3 @@ class OrderServiceIntegrationTest {
                 .isInstanceOf(OrderNotFoundException.class);
     }
 }
-
